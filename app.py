@@ -76,8 +76,10 @@ if run:
     for col, result in zip(cols, results):
         with col:
             v = result["verdict"]
+            conf = result.get("confidence", "medium")
             st.markdown(f"**{result['judge'].title()} Judge** {VERDICT_EMOJI[v]}")
-            st.markdown(f":{VERDICT_COLOR[v]}[{v}] — {result['score']}/100")
+            st.markdown(f":{VERDICT_COLOR[v]}[{v}] — {result['score']}/100 &nbsp; "
+                        f"`confidence: {conf}`")
             st.write(result["explanation"])
             if result["issues"]:
                 st.markdown("**Issues:**")

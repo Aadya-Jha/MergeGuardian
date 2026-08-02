@@ -15,6 +15,12 @@ before or after it. Use exactly this schema:
 {
   "score": <integer 0-100, where 100 is best>,
   "verdict": "<one of: PASS, WARN, BLOCK>",
+  "confidence": "<one of: high, medium, low - how certain you are in this
+                  verdict given the code shown. Use 'low' if the snippet
+                  is missing context you'd normally want (e.g. you can't
+                  see how a function is called elsewhere, or whether
+                  validation happens upstream). Use 'high' only when the
+                  issue or lack thereof is unambiguous from what you can see.>",
   "issues": ["<short issue 1>", "<short issue 2>", ...],
   "explanation": "<2-4 sentences written like a senior engineer explaining
                    the reasoning to the PR author, specific to this code,

@@ -47,6 +47,7 @@ def call_judge(client: Groq, judge_name: str, code: str, requirement: str = "") 
         # Defensive defaults in case the model omits a field
         parsed.setdefault("score", 50)
         parsed.setdefault("verdict", "WARN")
+        parsed.setdefault("confidence", "medium")
         parsed.setdefault("issues", [])
         parsed.setdefault("explanation", "No explanation returned.")
         parsed["judge"] = judge_name
@@ -60,6 +61,7 @@ def call_judge(client: Groq, judge_name: str, code: str, requirement: str = "") 
             "judge": judge_name,
             "score": 50,
             "verdict": "WARN",
+            "confidence": "low",
             "issues": [f"Judge failed to run: {e}"],
             "explanation": "This judge encountered an error and could not "
                             "complete its review. Treat this PR with extra "
