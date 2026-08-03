@@ -231,6 +231,12 @@ div[data-testid="stExpander"] {
 div[data-testid="stExpander"] summary {
     font-size: 13.5px !important; font-weight: 600 !important; color: var(--text) !important;
 }
+
+div[data-testid="stCodeBlock"] pre {
+    background: #1F2937 !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+}
 .history-row {
     display: flex; align-items: center; gap: 14px;
     padding: 10px 4px; border-bottom: 1px solid var(--border);
@@ -324,12 +330,7 @@ with col2:
 if "sample" in st.session_state and not code:
     code = st.session_state["sample"]
     st.markdown('<div class="section-label" style="margin-top:20px;">Loaded Fixture</div>', unsafe_allow_html=True)
-    escaped_code = html.escape(code)
-    st.markdown(
-        f'<div class="panel" style="font-family:\'JetBrains Mono\', monospace; '
-        f'white-space:pre-wrap; font-size:13px; color:#1F2937; overflow-x:auto;">{escaped_code}</div>',
-        unsafe_allow_html=True
-    )
+    st.code(code, language="python")
 
 run = st.button("Analyze Pull Request", type="primary", disabled=not code.strip(), use_container_width=False)
 
