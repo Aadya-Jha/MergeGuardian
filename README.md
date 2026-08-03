@@ -1,9 +1,6 @@
 # MergeGuardian 🛡️
 
-An AI Pull Request Firewall. Instead of scoring an AI-generated response
-after the fact, MergeGuardian sits in the critical path of a code merge:
-it judges a code change and returns a **merge decision** (PASS / WARN /
-BLOCK), not just a number.
+An AI Pull Request Firewall. An AI Pull Request Firewall that uses specialized LLM judges to evaluate AI-generated code for security, correctness, and maintainability before it is merged into production.
 
 ## Problem Statement
 
@@ -13,6 +10,10 @@ A single reviewer skimming a 350-line AI-generated diff can easily miss a
 SQL injection or a requirement gap. MergeGuardian automates the first
 pass of that review using LLM-as-judge, so obviously risky changes are
 caught before a human even opens the PR.
+
+## Why LLM-as-a-Judge?
+
+MergeGuardian uses LLMs as specialized reviewers rather than code generators. Each judge evaluates a single quality dimension (Security, Correctness, or Maintainability) and produces structured, explainable feedback. A consensus engine converts these independent judgments into a merge decision, demonstrating how LLMs can act as governance and quality gates in modern software engineering workflows.
 
 ## Solution Overview
 
@@ -36,7 +37,25 @@ Every evaluation is logged to a local SQLite history so past runs can be
 reviewed from the UI — basic observability over judge behavior across
 multiple PRs, not just a single one-shot result.
 
-## Architecture
+## Features
+
+- Security, Correctness and Maintainability judges
+- PASS / WARN / BLOCK merge decision
+- Consensus-based merge policy
+- Explainable verdicts with issues and confidence
+- SQLite evaluation history
+- Groq-powered low-latency inference
+- Sample vulnerable and clean code fixtures
+
+## Tech Stack
+
+- **Language:** Python
+- **Frontend:** Streamlit
+- **LLM:** Groq API (`llama-3.3-70b-versatile`)
+- **Database:** SQLite
+- **Configuration:** python-dotenv
+
+## System Architecture
 
 ```
 User pastes code/diff
@@ -97,26 +116,36 @@ just a number.
    ```
 5. Paste code into the text box (or click one of the sample buttons) and
    click "Run Judges."
-6. Expand "📜 Evaluation history" at the bottom to see past runs. This
+6. Expand "Evaluation history" at the bottom to see past runs. This
    creates a local `history.db` file (SQLite) in the project folder —
    already excluded via `.gitignore`, along with `.env`.
 
+## Project Structure
+
+```text
+mergeguardian/
+├── app.py                  # Streamlit frontend
+├── judge.py                # Runs the three LLM judges & consensus logic
+├── prompts.py              # System prompts for each judge
+├── history.py              # SQLite history management
+├── utils.py                # Helper utilities (icons, formatting, etc.)
+├── sample_code/
+│   ├── bad_example.py      # Vulnerable demo code
+│   └── good_example.py     # Clean demo code
+├── assets/
+│   └── icons/              # SVG icons used in the UI
+├── .env.example            # Environment variable template
+├── requirements.txt
+├── README.md
+└── config.toml             # Streamlit configuration
+```
+
 ## Assumptions
 
-- The tool evaluates a pasted code snippet or diff, not a live GitHub
-  webhook integration — this keeps the MVP scoped and demo-friendly.
-  Live GitHub PR integration is a natural extension (see below).
-- "Test coverage" is intentionally **not** reported by the judges, since
-  that is a measured fact (which lines actually executed), not something
-  an LLM can honestly assess without running the test suite. A future
-  version would run a real coverage tool and feed the result to the
-  Correctness judge as context, rather than have the LLM guess it.
-- Groq's free tier (≈30 requests/min) is sufficient for this demo's
-  single-PR-at-a-time usage pattern; a production version would need the
-  paid tier or a self-hosted model at scale.
-- Evaluation history is stored locally in SQLite for simplicity; a
-  multi-user deployment would move this to a shared database, but no
-  access-control layer is needed for a single-user demo tool like this.
+- The MVP evaluates pasted code snippets or diffs rather than integrating directly with GitHub PRs.
+- LLM judges evaluate code quality but do not execute code or measure real test coverage.
+- Groq's free tier is sufficient for single-user demo usage.
+- Evaluation history is stored locally in SQLite for simplicity.
 
 ## Future Improvements
 
@@ -124,7 +153,10 @@ just a number.
 - Swap in genuinely distinct models per judge for stronger independence
 - Feed real static-analysis / coverage tool output into the judges as
   grounding context, rather than relying on LLM judgment alone
-- Human-in-the-loop override for BLOCK verdicts before merge is actually
-  prevented
+- Human-in-the-loop approval workflow for overriding BLOCK decisions
 - Trend view over history (e.g. average risk score per week) to spot
   prompt or code-quality regressions over time
+
+## License
+
+This project is licensed under the MIT License.
