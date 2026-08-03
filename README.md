@@ -2,6 +2,12 @@
 
 An AI Pull Request Firewall. An AI Pull Request Firewall that uses specialized LLM judges to evaluate AI-generated code for security, correctness, and maintainability before it is merged into production.
 
+## 🔗 Resources
+
+- [Project Documentation](https://docs.google.com/document/d/1wr4xZo4MLGu6Aj7QG-jdnr4zAu03NyFnBVwA0EgYfhg/edit?usp=sharing)
+- [Demo Video](https://drive.google.com/file/d/1wb_SHv_t5sqhWLNY8sW5nviWb_z5J2L5/view?usp=sharing)
+- [Live Demo](https://mergeguardian.streamlit.app/)
+
 ## Problem Statement
 
 AI coding assistants now write large portions of production code, but
