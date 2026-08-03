@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from judge import run_all_judges, compute_consensus
 from history import save_evaluation, get_history, clear_history
 from utils import icon
-import html
+import html as html_lib
 
 load_dotenv()
 
@@ -404,6 +404,7 @@ if run:
                 for issue in result["issues"]:
                     issues_html += f'<div class="judge-issue">{issue}</div>'
 
+            safe_explanation = html_lib.escape(result['explanation'])
             st.markdown(f"""
             <div class="judge-card">
                 <div class="judge-header">
@@ -417,9 +418,9 @@ if run:
                     <span class="judge-score">{result['score']}/100</span>
                     <span class="judge-confidence">{conf} confidence</span>
                 </div>
-                <div class="judge-explanation">{result['explanation']}</div>
+                <div class="judge-explanation">{safe_explanation}</div>
                 {issues_html}
-            </div>
+            
             """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------
